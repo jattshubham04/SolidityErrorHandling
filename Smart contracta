@@ -1,0 +1,49 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract ErrorHandlingContract {
+
+    address public owner;
+    uint256 public balance;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    // Function to deposit ether to the contract
+    function deposit() public payable {
+        balance += msg.value;
+    }
+
+    // Function to withdraw ether from the contract
+    function withdraw(uint256 _amount) public {
+        // Using require to validate input conditions
+        require(_amount <= balance, "Insufficient balance");
+        require(msg.sender == owner, "Only the owner can withdraw");
+
+        // Reducing balance
+        balance -= _amount;
+
+        // Transferring ether
+        payable(msg.sender).transfer(_amount);
+    }
+
+    // Function to transfer ownership
+    function transferOwnership(address newOwner) public {
+        // Using assert to check for critical conditions
+        assert(newOwner != address(0));
+        assert(newOwner != owner);
+
+        owner = newOwner;
+    }
+
+    // Function to demonstrate revert
+    function demoRevert(uint256 _amount) public {
+        if (_amount > balance) {
+            // Using revert for complex error handling
+            revert("Revert: Amount exceeds balance");
+        }
+
+        // Some logic
+    }
+}
